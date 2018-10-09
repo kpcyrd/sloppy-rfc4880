@@ -1,0 +1,22 @@
+
+[package]
+name = "sloppy-rfc4880-fuzz"
+version = "0.0.1"
+authors = ["Automatically generated"]
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies.sloppy-rfc4880]
+path = ".."
+[dependencies.libfuzzer-sys]
+git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "rfc4880"
+path = "fuzz_targets/rfc4880.rs"
