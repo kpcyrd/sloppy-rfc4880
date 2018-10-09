@@ -34,6 +34,10 @@ impl<R: Read> Parser<R> {
             max_alloc: Some(max_alloc),
         }
     }
+
+    pub fn inner(&self) -> &R {
+        &self.r
+    }
 }
 
 impl<R: Read> Iterator for Parser<R> {
