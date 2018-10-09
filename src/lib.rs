@@ -17,12 +17,21 @@ pub use packet::Tag;
 
 pub struct Parser<R: Read> {
     r: R,
+    max_alloc: Option<usize>,
 }
 
 impl<R: Read> Parser<R> {
     pub fn new(r: R) -> Parser<R> {
         Parser {
             r,
+            max_alloc: None,
+        }
+    }
+
+    pub fn with_max_alloc(r: R, max_alloc: usize) -> Parser<R> {
+        Parser {
+            r,
+            max_alloc: Some(max_alloc),
         }
     }
 }
@@ -32,7 +41,7 @@ impl<R: Read> Iterator for Parser<R> {
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut packet_body = Vec::new();
-        let tag = packet::read(&mut self.r, &mut packet_body);
+        let tag = packet::read(&mut self.r, &mut packet_body, &self.max_alloc);
         debug!("Received tag: {:?}", tag);
 
         match tag {
@@ -96,8 +105,7 @@ vA==
             }
         }
 
-        // UserID wasn't found
-        assert!(false);
+        unreachable!("UserID wasn't found");
     }
 
     #[test]
@@ -115,7 +123,34 @@ vA==
             }
         }
 
-        // UserID wasn't found
-        assert!(false);
+        unreachable!("UserID wasn't found");
+    }
+
+    #[test]
+    fn extract_userid_from_pubkey_freebsd_with_alloc_limit() {
+        let key = include_bytes!("../data/freebsd.asc");
+        let key = read_armored(&mut BufReader::new(&key[..])).expect("read_armored");
+
+        for (tag, body) in Parser::with_max_alloc(key.as_slice(), 1024 * 1024) {
+            // println!("{:?}: {:?}", tag, body);
+            if tag == Tag::UserID {
+                let body = String::from_utf8(body).expect("invalid utf8");
+                println!("UserID: {:?}", body);
+                assert_eq!("FreeBSD Security Officer <security-officer@FreeBSD.org>", body);
+                return;
+            }
+        }
+
+        unreachable!("UserID wasn't found");
+    }
+
+    #[test]
+    fn extract_userid_from_pubkey_freebsd_with_tiny_alloc_limit() {
+        let key = include_bytes!("../data/freebsd.asc");
+        let key = read_armored(&mut BufReader::new(&key[..])).expect("read_armored");
+
+        for (_tag, _body) in Parser::with_max_alloc(key.as_slice(), 3) {
+            unreachable!("max alloc didn't work");
+        }
     }
 }

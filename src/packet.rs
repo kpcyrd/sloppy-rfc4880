@@ -51,6 +51,15 @@ impl Tag {
     }
 }
 
+fn ensure_alloc_limit(requested: usize, max_alloc: &Option<usize>) -> Result<()> {
+    if let Some(max_alloc) = max_alloc {
+        if requested > *max_alloc {
+            bail!("Allocation larger than max_alloc");
+        }
+    }
+    Ok(())
+}
+
 
 // TODO: In the next definition, replace Cow with an iterator returning &[u8] (for partial length).
 //
@@ -58,7 +67,7 @@ impl Tag {
 // partial packets. The `read_packet` function below is correct, but
 // allocates a vector which might get big.
 
-pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
+pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>, max_alloc: &Option<usize>) -> Result<Tag> {
 
     body.clear();
 
@@ -84,6 +93,8 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
 
                 // read more len bytes
                 let i0 = body.len();
+                ensure_alloc_limit(i0 + len, max_alloc)?;
+
                 trace!("Resizing buffer to {:?}", i0 + len);
                 body.resize(i0 + len, 0);
                 trace!("Resize done");
@@ -96,12 +107,14 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
             let len = read_length(l0 as usize, reader)?;
             trace!("Last part: {:?}", len);
             let i0 = body.len();
+            ensure_alloc_limit(i0 + len, max_alloc)?;
             body.resize(i0 + len, 0);
             reader.read_exact(&mut body[i0..])?;
 
         } else {
             let len = read_length(l0 as usize, reader)?;
             trace!("Packet length: {:?}", len);
+            ensure_alloc_limit(len, max_alloc)?;
             body.resize(len, 0);
             reader.read_exact(&mut body[..])?;
         }
@@ -116,22 +129,26 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
         if length_type == 0 {
 
             let len = reader.read_u8()? as usize;
+            ensure_alloc_limit(len, max_alloc)?;
             body.resize(len, 0);
             reader.read_exact(&mut body[..])?;
 
         } else if length_type == 1 {
 
             let len = reader.read_u16::<BigEndian>()? as usize;
+            ensure_alloc_limit(len, max_alloc)?;
             body.resize(len, 0);
             reader.read_exact(&mut body[..])?;
 
         } else if length_type == 2 {
 
             let len = reader.read_u32::<BigEndian>()? as usize;
+            ensure_alloc_limit(len, max_alloc)?;
             body.resize(len, 0);
             reader.read_exact(&mut body[..])?;
 
         } else {
+            // TODO: we can't enforce an allocation limit here
             reader.read_to_end(body)?;
         };
         packet_tag
