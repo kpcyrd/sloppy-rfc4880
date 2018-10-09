@@ -63,7 +63,9 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
     body.clear();
 
     let tag = reader.read_u8()?;
-    assert_eq!(tag & 0x80, 0x80);
+    if tag & 0x80 != 0x80 {
+        bail!("0x80 must be set in tag");
+    }
 
     let is_new_format = tag & 0x40 == 0x40;
     debug!("new format: {:?}", is_new_format);
