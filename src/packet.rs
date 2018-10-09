@@ -68,7 +68,7 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
     }
 
     let is_new_format = tag & 0x40 == 0x40;
-    debug!("new format: {:?}", is_new_format);
+    trace!("New packet format: {:?}", is_new_format);
 
     let tag = if is_new_format {
 
@@ -76,26 +76,32 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
 
         let mut l0 = reader.read_u8()?;
         if l0 >= 224 && l0 < 0xff {
-            debug!("Partial body length");
+            trace!("Partial body length....");
             while l0 >= 224 && l0 < 0xff {
                 // partial length
                 let len = 1 << (l0 & 0x1f);
+                trace!("Partial read: {:?}", len);
 
                 // read more len bytes
                 let i0 = body.len();
+                trace!("Resizing buffer to {:?}", i0 + len);
                 body.resize(i0 + len, 0);
+                trace!("Resize done");
                 reader.read_exact(&mut body[i0..])?;
-                l0 = reader.read_u8()?
+                trace!("Read done");
+                l0 = reader.read_u8()?;
+                trace!("Next l0: {:?}", l0);
             }
             // Last part of the packet
             let len = read_length(l0 as usize, reader)?;
+            trace!("Last part: {:?}", len);
             let i0 = body.len();
             body.resize(i0 + len, 0);
             reader.read_exact(&mut body[i0..])?;
 
         } else {
             let len = read_length(l0 as usize, reader)?;
-            debug!("len = {:?}", len);
+            trace!("Packet length: {:?}", len);
             body.resize(len, 0);
             reader.read_exact(&mut body[..])?;
         }
@@ -105,7 +111,7 @@ pub fn read<B: Read>(reader: &mut B, body: &mut Vec<u8>) -> Result<Tag> {
     } else {
 
         let packet_tag = (tag >> 2) & 0xf;
-        debug!("packet_tag: {:?}", Tag::from_byte(packet_tag));
+        trace!("Packet tag: {:?}", Tag::from_byte(packet_tag));
         let length_type = tag & 0x3;
         if length_type == 0 {
 

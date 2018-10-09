@@ -33,6 +33,7 @@ impl<R: Read> Iterator for Parser<R> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut packet_body = Vec::new();
         let tag = packet::read(&mut self.r, &mut packet_body);
+        debug!("Received tag: {:?}", tag);
 
         match tag {
             Ok(tag) => Some((tag, packet_body)),
