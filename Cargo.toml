@@ -1,14 +1,19 @@
 [package]
 name = "sloppy-rfc4880"
 version = "0.1.1"
-description = "RFC 4880 parser extract from openpgp crate"
+description = "RFC 4880 parser extract from the openpgp crate"
 authors = ["Pierre-Étienne Meunier <pe@pijul.org>",
            "kpcyrd <git@rxv.cc>"]
 license = "Apache-2.0"
 repository = "https://github.com/kpcyrd/sloppy-rfc4880"
+keywords = ["rfc4880", "pgp", "gpg", "gnupg", "openpgp"]
+categories = ["parser-implementations"]
 
 [dependencies]
 log = "0.4"
 byteorder = "1.2"
 failure = "0.1"
 base64 = "0.9"
+
+[dev-dependencies]
+env_logger = "0.5"
