@@ -9,7 +9,7 @@
 
 Pure rust parser for RFC-4880 (OpenPGP Message Format). The codebase is heavily
 based on the [openpgp] crate, but all crypto code has been removed to keep the
-number of dependencies low for project that only need to decode the binary
+number of dependencies low for projects that only need to decode the binary
 packet format.
 
 [openpgp]: https://crates.io/crates/openpgp

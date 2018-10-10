@@ -8,6 +8,10 @@ license = "Apache-2.0"
 repository = "https://github.com/kpcyrd/sloppy-rfc4880"
 keywords = ["rfc4880", "pgp", "gpg", "gnupg", "openpgp"]
 categories = ["parser-implementations"]
+readme = "README.md"
+
+[badges]
+travis-ci = { repository = "kpcyrd/sloppy-rfc4880" }
 
 [dependencies]
 log = "0.4"
