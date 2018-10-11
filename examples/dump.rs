@@ -1,5 +1,6 @@
 extern crate sloppy_rfc4880;
 extern crate env_logger;
+extern crate bytes;
 #[macro_use] extern crate log;
 
 use std::io::{self, Read};
@@ -14,7 +15,7 @@ fn main() {
 
     loop {
         match parser.next() {
-            Some(x) => println!("{:?}", x),
+            Some((tag, body)) => println!("{:?}: {:?}", tag, bytes::Bytes::from(body)),
             None => break,
         }
         info!("Remaining: {:?}", parser.inner().len());
