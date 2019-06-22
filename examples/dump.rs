@@ -4,6 +4,7 @@ extern crate bytes;
 #[macro_use] extern crate log;
 
 use std::io::{self, Read};
+use sloppy_rfc4880::{Tag, signature};
 
 fn main() {
     env_logger::init();
@@ -15,7 +16,14 @@ fn main() {
 
     loop {
         match parser.next() {
-            Some((tag, body)) => println!("{:?}: {:?}", tag, bytes::Bytes::from(body)),
+            Some((tag, body)) => {
+                let body = bytes::Bytes::from(body.clone());
+                println!("{:?}: {:?}", tag, body);
+                if tag == Tag::Signature {
+                    let issuer = signature::parse(&*body).expect("signature::parse");
+                    println!("\tissuer: {:?}", issuer);
+                }
+            },
             None => break,
         }
         info!("Remaining: {:?}", parser.inner().len());

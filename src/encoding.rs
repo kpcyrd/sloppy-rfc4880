@@ -1,4 +1,4 @@
-use errors::*;
+use crate::errors::*;
 use byteorder::{BigEndian, ReadBytesExt};
 use std::io::Read;
 
