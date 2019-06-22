@@ -1,7 +1,7 @@
-use errors::*;
+use crate::errors::*;
+use crate::encoding::read_length;
 use byteorder::{BigEndian, ReadBytesExt};
 use std::io::Read;
-use encoding::read_length;
 
 // https://tools.ietf.org/html/rfc4880#section-4.3
 // sed -e "s/ *\(.*\) = \(.*\),/\2 => Some(Packet::\1),/"

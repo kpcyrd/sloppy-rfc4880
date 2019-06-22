@@ -1,5 +1,5 @@
 use base64;
-use errors::*;
+use crate::errors::*;
 use std::io::prelude::*;
 
 

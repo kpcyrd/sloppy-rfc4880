@@ -1,8 +1,6 @@
 #![warn(unused_extern_crates)]
 #[macro_use]
 extern crate log;
-extern crate byteorder;
-extern crate base64;
 #[macro_use]
 extern crate failure;
 
@@ -13,6 +11,8 @@ pub mod errors;
 mod encoding;
 pub mod packet;
 pub use packet::Tag;
+pub mod signature;
+pub use signature::Signature;
 
 
 pub struct Parser<R: Read> {
