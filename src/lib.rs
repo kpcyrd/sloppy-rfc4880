@@ -11,6 +11,7 @@ pub mod errors;
 mod encoding;
 pub mod packet;
 pub use packet::Tag;
+pub mod pubkey;
 pub mod signature;
 pub use signature::Signature;
 
