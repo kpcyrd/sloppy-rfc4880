@@ -23,7 +23,7 @@ fn find_free_num(prefix: &str, ctr: &mut usize) -> PathBuf {
 fn main() {
     env_logger::init();
 
-    let prefix = env::args().skip(1).next().expect("Missing prefix");
+    let prefix = env::args().nth(1).expect("Missing prefix");
 
     let mut buf = Vec::new();
     io::stdin().read_to_end(&mut buf).expect("read_to_end");

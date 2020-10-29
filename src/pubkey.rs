@@ -2,11 +2,11 @@ use sha1::{Sha1, Digest};
 
 pub fn fingerprint(pubkey: &[u8]) -> String {
     let mut h = Sha1::new();
-    h.input(b"\x99");
+    h.update(b"\x99");
     let len = pubkey.len() as u16;
-    h.input(len.to_be_bytes());
-    h.input(pubkey);
-    let fp = h.result();
+    h.update(len.to_be_bytes());
+    h.update(pubkey);
+    let fp = h.finalize();
     hex::encode_upper(fp)
 }
 

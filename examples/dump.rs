@@ -14,24 +14,19 @@ fn main() {
 
     let mut parser = sloppy_rfc4880::Parser::new(buf.as_slice());
 
-    loop {
-        match parser.next() {
-            Some((tag, body)) => {
-                let body = bytes::Bytes::from(body.clone());
-                println!("{:?}: {:?}", tag, body);
-                match tag {
-                    Tag::PublicKey => {
-                        let fp = pubkey::fingerprint(&*body);
-                        println!("\tfingerprint: {:?}", fp);
-                    },
-                    Tag::Signature => {
-                        let issuer = signature::parse(&*body).expect("signature::parse");
-                        println!("\tissuer: {:?}", issuer);
-                    },
-                    _ => (),
-                }
+    while let Some((tag, body)) = parser.next() {
+        let body = bytes::Bytes::from(body.clone());
+        println!("{:?}: {:?}", tag, body);
+        match tag {
+            Tag::PublicKey => {
+                let fp = pubkey::fingerprint(&*body);
+                println!("\tfingerprint: {:?}", fp);
             },
-            None => break,
+            Tag::Signature => {
+                let issuer = signature::parse(&*body).expect("signature::parse");
+                println!("\tissuer: {:?}", issuer);
+            },
+            _ => (),
         }
         info!("Remaining: {:?}", parser.inner().len());
     }

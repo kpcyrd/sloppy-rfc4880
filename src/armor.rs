@@ -1,7 +1,5 @@
-use base64;
 use crate::errors::*;
 use std::io::prelude::*;
-
 
 pub fn read_armored<R: BufRead>(r: &mut R) -> Result<Vec<u8>> {
     let mut buf = String::new();
@@ -45,7 +43,7 @@ mod tests {
     use std::io::BufReader;
 
     fn bytes() -> Vec<u8> {
-        let bytes = base64::decode(&r#"mQENBFu6q90BCADgD7Q9aH5683yt7hzPktDkAUNAZJHwYhUNeyGK43frPyDRWQmqN+oXTfiYWLQN
+        base64::decode(&r#"mQENBFu6q90BCADgD7Q9aH5683yt7hzPktDkAUNAZJHwYhUNeyGK43frPyDRWQmqN+oXTfiYWLQN
 +d7KNBTnF9uwyBdaLM7SH44lLNYo8W09mVM2eK+wt19uf5HYNgAE8la45QLo/ce9CQVe1a4oXNWq
 6l0FOY7M+wLe+G2wMwz8RXGgwd/qQp4/PB5YpUhxnAnzClxvwymrL6BQXsRcKSMSD5bIzIv95n10
 5CvW5Hql7JR9zgOR+gHqVOH8HBUcZxMumrTM6aKLgAhgM8Sn36gCFOfjlG1b1OFLZhUtgro/nnEO
@@ -68,9 +66,7 @@ GOQrNMQ4JGqJ84BRrtOExjSqo41KhAhNe+bwPGH9/Igiixc4tH07xa7TOy4MyJv/6gpbHy/lW1hq
 pCAgM5fT/im5/6QFk0tED6vIuc54IWiOmwCnjZiQnJ8uCwEu+cuJ5Exwy9CNERLp5v0y4eG+0E+a
 t9j/macOg39qf09t53pTqe9dWv5NIi319TeBsKZ2lb0crrQjsbHqk0DAUwgQuoANqLkuvA=="#
             .replace("\n", "")
-        ).expect("base64");
-
-        bytes
+        ).expect("base64")
     }
 
     #[test]

@@ -1,2 +1,2 @@
-pub use failure::{Error, ResultExt};
-pub type Result<T> = ::std::result::Result<T, Error>;
+pub use log::{debug, trace};
+pub use anyhow::{Result, Error, Context, bail};

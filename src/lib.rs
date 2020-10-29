@@ -1,10 +1,5 @@
-#![warn(unused_extern_crates)]
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate failure;
-
 use std::io::prelude::*;
+use crate::errors::*;
 
 pub mod armor;
 pub mod errors;
