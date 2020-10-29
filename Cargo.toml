@@ -1,6 +1,6 @@
 [package]
 name = "sloppy-rfc4880"
-version = "0.1.5"
+version = "0.2.0"
 description = "RFC 4880 parser extract from the openpgp crate"
 authors = ["Pierre-Étienne Meunier <pe@pijul.org>",
            "kpcyrd <git@rxv.cc>"]
