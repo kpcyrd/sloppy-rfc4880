@@ -1,12 +1,8 @@
-extern crate sloppy_rfc4880;
-extern crate env_logger;
-#[macro_use] extern crate log;
-
+use sloppy_rfc4880::errors::*;
 use std::fs;
 use std::env;
 use std::io::{self, Read};
 use std::path::PathBuf;
-
 
 fn find_free_num(prefix: &str, ctr: &mut usize) -> PathBuf {
     loop {
@@ -20,13 +16,15 @@ fn find_free_num(prefix: &str, ctr: &mut usize) -> PathBuf {
     }
 }
 
-fn main() {
+fn main() -> Result<()> {
     env_logger::init();
 
-    let prefix = env::args().nth(1).expect("Missing prefix");
+    let prefix = env::args().nth(1)
+        .context("Missing prefix")?;
 
     let mut buf = Vec::new();
-    io::stdin().read_to_end(&mut buf).expect("read_to_end");
+    io::stdin().read_to_end(&mut buf)
+        .context("read_to_end")?;
     let total = buf.len();
 
     let mut ctr = 0;
@@ -46,8 +44,11 @@ fn main() {
         let range = old..new;
         info!("Dumping {:?} into {:?}, remaining={:?}", range, path, remaining);
 
-        fs::write(path, &buf[range]).expect("Failed to write");
+        fs::write(path, &buf[range])
+            .context("Failed to write")?;
 
         old = new;
     }
+
+    Ok(())
 }

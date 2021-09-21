@@ -24,5 +24,5 @@ hex = "0.4"
 sha-1 = "0.9"
 
 [dev-dependencies]
-env_logger = "0.8"
-bytes = "0.6"
+env_logger = "0.9"
+bytes = "1"
